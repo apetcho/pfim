@@ -5,6 +5,7 @@ import sys
 
 from enum import Enum
 from collections import namedtuple
+from winreg import DeleteKey
 from _version import __PFIM_VERSION
 from typing import List, Dict, Callable, Generator, Mapping
 
@@ -12,7 +13,7 @@ from typing import List, Dict, Callable, Generator, Mapping
 # Global Constants and Structures
 PfimEntry = namedtuple("PfimEntry", "date tag kind amount")
 Output = namedtuple("Output", "report summary")
-QueryKey = namedtuple("QueryKey", "key type")
+# QueryKey = namedtuple("QueryKey", "key")
 PFIM_VERSION = __PFIM_VERSION
 del __PFIM_VERSION
 _DBNAME = "pfimdata.db"
@@ -100,20 +101,52 @@ class PfimCore:
 
     def __init__(self):
         self._version = PFIM_VERSION
-        self._query_map = {}
+        self._query_map:Mapping[tuple, Callable] = {}
         self._mode = None
         self._output = None
 
-    def _init_query_map(self):
+    def _init_query_map(self) -> None:
         """Initial query map"""
-        ADD = PfimCore.QueryKey.ADD
-    
-        self._query_map[(PfimCore.QueryType)]
+        ADD = PfimCore.ADD
+        FETCH = PfimCore.FETCH
+        DELETE = PfimCore.DELETE
+        UPDATE = PfimCore.UPDATE
+        # -- add entry
+        keyfn = lambda *args : {item for item in args}
+        # entry = (earned | spent) + [tag]
+        self._query_map[(ADD, keyfn("spent"))] = None
+        self._query_map[(ADD, keyfn("earned"))] = None
+        self._query_map[(ADD, keyfn("spent", "tag"))] = None
+        self._query_map[(ADD, keyfn("earned", "tag"))] = None
+        
+        # -- Fetch Operations
+        # 1. fetch_tag([(,)|(date)|(date+kind)|(kind)])
+        self._query_map[(FETCH, keyfn("tag"))] = None
+        self._query_map[(FETCH, keyfn("tag", "date"))] = None
+        self._query_map[(FETCH, keyfn("tag", "kind"))] = None
+        self._query_map[(FETCH, keyfn("tag", "kind", "date"))] = None
+        # 2. fetch_kind([(,)|(date)|(date+kind)|(tag)])
+        self._query_map[(FETCH, keyfn("kind"))] = None
+        self._query_map[(FETCH, keyfn("kind", "tag"))] = None
+        self._query_map[(FETCH, keyfn("kind", "date"))] = None
+        self._query_map[(FETCH, keyfn("kind", "date", "tag"))] = None
+        # 3. fetch_date([(,)|(tag)|(tag+kind)|(kind)])
+        self._query_map[(FETCH, keyfn("date"))] = None
+        self._query_map[(FETCH, keyfn("date", "tag"))] = None
+        self._query_map[(FETCH, keyfn("date", "kind"))] = None
+        self._query_map[(FETCH, keyfn("date", "tag", "kind"))] = None
+        # 4. fetch_all()
+        self._query_map[(FETCH, keyfn("fetch"))] = None
+        # -- Update Operations
+        self._query_map[(UPDATE, keyfn("update"))] = None
+        # -- Delete Operations
+        self._query_map[(DELETE, keyfn("delete"))] = None
 
-    def _set_query(self, key: QueryKey) -> None:
+
+    def _set_query(self, key: set) -> None:
         pass
 
-    def _get_query(self, key: QueryKey) -> str:
+    def _get_query(self, key: set) -> str:
         pass
 
     def make_output(self) -> Output:
