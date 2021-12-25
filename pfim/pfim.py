@@ -1,15 +1,18 @@
 """PFIM: Personal Finance Manager"""
 
-from collections import namedtuple
-from email.generator import Generator
-from email.mime import audio
-from enum import Enum, auto
+import os
+import sys
 
-from platformdirs import sys
+from enum import Enum
+from collections import namedtuple
 from _version import __PFIM_VERSION
+from typing import List, Dict, Callable, Generator, Mapping
+
 
 # Global Constants and Structures
 PfimEntry = namedtuple("PfimEntry", "date tag kind amount")
+Output = namedtuple("Output", "report summary")
+QueryKey = namedtuple("QueryKey", "key type")
 PFIM_VERSION = __PFIM_VERSION
 del __PFIM_VERSION
 _DBNAME = "pfimdata.db"
@@ -37,6 +40,7 @@ class PfimData:
     """PFIM database interface."""
 
     def __init__(self):
+        # start the db: create a new if it doesn't exists
         pass
 
     def start_session(self, *args) -> None:
@@ -58,50 +62,53 @@ class PfimData:
         pass
 
 
+class InteractivePfim:
+    PROMPT = "pfim>> "
+
+    def __init__(self):
+        pass
+
+    def add(self, **kwargs):
+        pass
+
+    def report(self, **kwargs):
+        pass
+
+    def summary(self, **kwargs):
+        pass
+
+    def quit(self):
+        pass
+
+
+class Report:
+    pass
+
+class ReportSummary:
+    pass
+
 
 class PfimCore:
     """PFIM Core class."""
-    class InteractivePfimCmds:
-        def __init__(self):
-            pass
-
-        def add(self, **kwargs):
-            pass
-
-        def report(self, **kwargs):
-            pass
-
-        def summary(self, **kwargs):
-            pass
-
-        def quit(self):
-            pass
-
-    class QueryType(Enum):
-        ADD = auto()
-        FETCH = auto()
-        UPDATE = auto()
-        DELETE = auto()
-
-    class Report:
-        pass
-
-    class ReportSummary:
-        pass
-
+    
     prolog = ""
     epilog = ""
-    Output = namedtuple("Output", "report summary")
-    QueryKey = namedtuple("QueryKey", "key type")
+    ADD = 1
+    FETCH = 2
+    UPDATE = 3
+    DELETE = 4
 
     def __init__(self):
         self._version = PFIM_VERSION
-        self._queries_map = {}
+        self._query_map = {}
         self._mode = None
         self._output = None
 
-    def _init_queries_map(self):
-        pass
+    def _init_query_map(self):
+        """Initial query map"""
+        ADD = PfimCore.QueryKey.ADD
+    
+        self._query_map[(PfimCore.QueryType)]
 
     def _set_query(self, key: QueryKey) -> None:
         pass
