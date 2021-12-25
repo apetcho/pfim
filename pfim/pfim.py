@@ -2,12 +2,27 @@
 
 import os
 import sys
-
+import sqlite3
+import logging
+import argparse
+from datetime import date, timedelta
 from enum import Enum
 from collections import namedtuple
-from winreg import DeleteKey
 from _version import __PFIM_VERSION
 from typing import List, Dict, Callable, Generator, Mapping
+
+## -- set up a logger for the application
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+_filehandler = logging.FileHandler(
+    os.path.join(os.environ["HOMe"], ".pfim.log"))
+_filehandler.setLevel(logging.DEBUG)
+_consolehandler = logging.StreamHandler()
+_consolehandler.setLevel(logging.ERROR)
+_formatter = logging.Formatter(
+    "[%(asctime)s]::%(name)s::%(message)s")
+_filehandler.setFormatter(_formatter)
+_consolehandler.setFormatter(_formatter)
 
 
 # Global Constants and Structures
@@ -19,6 +34,7 @@ del __PFIM_VERSION
 _DBNAME = "pfimdata.db"
 _EARN_KIND = "E"
 _SPENT_KIND = "S"
+
 
 # --- PFIM utility class --
 
@@ -41,6 +57,7 @@ class PfimData:
     """PFIM database interface."""
 
     def __init__(self):
+        self._logger = logging.getLogger("pfim.PfimData")
         # start the db: create a new if it doesn't exists
         pass
 
@@ -67,6 +84,7 @@ class InteractivePfim:
     PROMPT = "pfim>> "
 
     def __init__(self):
+        self._logger = logging.getLogger("pfim.InteractivePfim")
         pass
 
     def add(self, **kwargs):
@@ -83,10 +101,12 @@ class InteractivePfim:
 
 
 class Report:
-    pass
+    def __init__(self):
+        self._logger = logging.getLogger("pfim.Report")
 
 class ReportSummary:
-    pass
+    def __init__(self):
+        self._logger = logging.getLogger("pfim.ReportSummary")
 
 
 class PfimCore:
@@ -100,6 +120,7 @@ class PfimCore:
     DELETE = 4
 
     def __init__(self):
+        self._logger = logging.getLogger("pfim.PfimCore")
         self._version = PFIM_VERSION
         self._query_map:Mapping[tuple, Callable] = {}
         self._mode = None
@@ -157,8 +178,12 @@ class PfimCore:
 
     @staticmethod
     def cmd_parser():
+        _logger = logging.getLogger("pfim.PfimCore.cmd_parser")
         pass
 
 
 def main():
     pass
+
+
+del _filehandler, _consolehandler, _formatter
