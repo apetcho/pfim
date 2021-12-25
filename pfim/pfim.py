@@ -307,6 +307,12 @@ class PfimCore:
             description="PFIM: Personal Finance Manager",
             epilog=""
         )
+        # group0
+        #pfim [-v | --version]
+        parser.add_argument("-v", "--version", action="version",
+            version="%(prog)s " + f"{VERSION}")
+        parser.add_argument("-i", "--interactive", dest="imode",
+            action="store_true", help="Switch to interactive mode")
 
         # group1
         # group2
