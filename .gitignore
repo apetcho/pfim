@@ -1,0 +1,9 @@
+*.pyc
+*~
+doc/examples
+*.swp
+*.vscode/
+.pytest*
+.eggs
+.DS_Store
+pfim/_version.py

@@ -1,0 +1,7 @@
+include README.md INSTALL LICENSE MANIFEST.in
+include setup.py
+exclude *.pyc *~
+recursive-include pfim *.py
+recursive-include doc *
+recursive-exclude doc/examples
+global-exclude __pycache__/*
