@@ -4,6 +4,6 @@ doc/examples
 *.swp
 *.vscode/
 .pytest*
-.eggs
+*.egg*
 .DS_Store
 pfim/_version.py
