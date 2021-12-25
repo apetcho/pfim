@@ -3,6 +3,9 @@ from .pfim import PfimCore
 from .pfim import PfimEntry
 from .pfim import PfimData
 from .pfim import InteractivePfim
+from .pfim import Output, OutputBeautify
+from .pfim import Report, ReportSummary
+
 # import _version
 from ._version import PFIM_VERSION
 
@@ -22,8 +25,8 @@ def main():
     parser = _cmd_parser()
     args = parser.parse_args()
     if len(sys.argv) == 1:
-        # parser.print_help()
-        pass
+        parser.print_help()
+        
     if args.cfg:
         _ipfim()
         print("Fancy output turned ON")
