@@ -313,8 +313,25 @@ class PfimCore:
             version="%(prog)s " + f"{VERSION}")
         parser.add_argument("-i", "--interactive", dest="imode",
             action="store_true", help="Switch to interactive mode")
+        parser.add_argument("--fancy-output", action="store_true",
+            dest="cfg", help="Toggle into fancy output mode")
 
         # group1
+        group1 = parser.add_argument_group(
+            "Add a new amount received or spent to the database")
+        group1.add_argument("--tag", nargs="?", type=str, dest="atag",
+            help=("Attach a tag to this received. Default is RCV if money "  
+                "received"),
+            default="RCV", metavar="TAG")
+        group1.add_argument("--date", nargs="?", type=str, dest="aedate",
+            help="Add the specific date for the received amount",
+            default="current date", metavar="YYYY-MM-DD")
+        addex = group1.add_mutually_exclusive_group()
+        addex.add_argument("--rcv", type=float, dest="arcv",
+            help="The actual amount you received", metavar="AMOUNT")
+        addex.add_argument("--spent", type=float, dest="aspent",
+            help="The actual amount you spent", metavar="AMOUNT")
+
         # group2
         # group3
         # group4
@@ -327,9 +344,14 @@ class PfimCore:
 
 def main():
     parser = PfimCore.cmd_parser()
-    parser.parse_args()
+    args = parser.parse_args()
     if len(sys.argv) == 1:
-        parser.print_help()
+        # parser.print_help()
+        pass
+    if args.cfg:
+        print("Fancy output turned ON")
+    else:
+        print("Fancy output turned OFF")    
 
 
 del _filehandler, _consolehandler, _formatter
