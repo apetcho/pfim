@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 from setuptools import setup
+from pfim._version import __PFIM_VERSION
 
 with open("README.md", "r") as fd:
     LONG_DESCRCIPTION = fd.read()
+
+
 
 setup(
     name="pfim",
     author="Eyram K. Apetcho",
     author_email="orion2dev@gmail.com",
-    url="",
+    url=f"{__PFIM_VERSION}",
+    version="",
     python_requires=">=3.6",
     license="BSD-2",
     description="Personal Finance Manager",
