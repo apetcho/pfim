@@ -4,11 +4,11 @@ import os
 import sys
 import sqlite3
 import logging
-import argparse
 from datetime import date, timedelta
 from enum import Enum
 from collections import namedtuple
-from _version import __PFIM_VERSION
+# from . import _version # as __PFIM_VERSION
+
 from typing import List, Dict, Callable, Generator, Mapping
 
 ## -- set up a logger for the application
@@ -29,8 +29,7 @@ _consolehandler.setFormatter(_formatter)
 PfimEntry = namedtuple("PfimEntry", "date tag kind amount")
 Output = namedtuple("Output", "report summary")
 # QueryKey = namedtuple("QueryKey", "key")
-PFIM_VERSION = __PFIM_VERSION
-del __PFIM_VERSION
+# del __PFIM_VERSION
 _DBNAME = os.path.join(os.environ["HOME"], ".pfimdata.db")
 _EARN_KIND = "E"
 _SPENT_KIND = "S"
@@ -118,6 +117,9 @@ class InteractivePfim:
     def quit(self):
         pass
 
+    def __call__(self, *args, **kwargs):
+        pass
+
 
 class Report:
     def __init__(self):
@@ -140,7 +142,6 @@ class PfimCore:
 
     def __init__(self):
         self._logger = logging.getLogger("pfim.PfimCore")
-        self._version = PFIM_VERSION
         self._query_map:Mapping[tuple, Callable] = {}
         self._mode = None
         self._output = None
@@ -249,113 +250,12 @@ class PfimCore:
     def create_query(self, *arg, **kw):
         pass
 
-    @staticmethod
-    def cmd_parser():
-        _logger = logging.getLogger("pfim.PfimCore.cmd_parser")
-        VERSION = PFIM_VERSION
-        USAGE = """
-        pfim [-h | --help]
-        pfim [-v | --version]
-        
-        pfim --interactive
-
-        pfim --earned --amount=VALUE
-        pfim --earned --tag=TAG --amount=VALUE
-        pfim --earned --date=YYYY-MM-DD --amount=VALUE
-        pfim --earned --tag=TAG --date=YYYY-MM-DD --amount=VALUE
-
-        pfim --spent --amount=VALUE
-        pfim --spent --tag=TAG --amount=VALUE
-        pfim --spent --date=YYYY-MM-DD --amount=VALUE
-        pfim --spent --tag=TAG --date=YYYY-MM-DD --amount=VALUE
-        
-        pfim --show
-        pfim --show --sort-date
-        pfim --show --sort-tag
-        pfim --show --sort-amount
-        pfim --show --before-date=YYYY-MM-DD [--sort-date|--sort-date|--sort-amount]
-        pfim --show --after-date=YYYY-MM-DD [--sort-date|--sort-date|--sort-amount]
-
-        pfim --show-earned
-        pfim --show-earned --sort-date
-        pfim --show-earned --sort-tag
-        pfim --show-earned --sort-amount
-        pfim --show-earned --before-date=YYYY-MM-DD [--sort-date|--sort-date|--sort-amount]
-        pfim --show-earned --after-date=YYYY-MM-DD [--sort-date|--sort-date|--sort-amount]
-
-        pfim --show-spent
-        pfim --show-spent --sort-date
-        pfim --show-spent --sort-tag
-        pfim --show-spent --sort-amount
-        pfim --show-spent --before-date=YYYY-MM-DD [--sort-date|--sort-date|--sort-amount]
-        pfim --show-spent --after-date=YYYY-MM-DD [--sort-date|--sort-date|--sort-amount]
-
-        pfim --update --tag=TAG1 --new-tag=TAG2
-        pfim --update --date=YYYY-MM-DD
-        pfim --update --earned --amount=VALUE1 --new-amount=VALUE2
-        pfim --update --spent --amount=VALUE2 --new-amount=VALUE2
-
-        pfim --delete-all
-        pfim --delete --tag=TAG1
-        pfim --delete --date=YYYY-MM-DD
-        pfim --delete --earned --amount=VALUE
-        pfim --deltte --spent --amount=VALUE
-        """
-        parser = argparse.ArgumentParser(
-            prog="pfim",
-            usage=USAGE,
-            description="PFIM: Personal Finance Manager",
-            epilog=""
-        )
-        # group0
-        #pfim [-v | --version]
-        parser.add_argument("-v", "--version", action="version",
-            version="%(prog)s " + f"{VERSION}")
-        parser.add_argument("-i", "--interactive", dest="imode",
-            action="store_true", help="Switch to interactive mode")
-        parser.add_argument("--fancy-output", action="store_true",
-            dest="cfg", help="Toggle into fancy output mode")
-
-        # group1
-        group1 = parser.add_argument_group(
-            "Add a new amount received or spent to the database")
-        group1.add_argument("--tag", nargs="?", type=str, dest="atag",
-            help=("Attach a tag to this received. Default is RCV if money "  
-                "received"),
-            default="RCV", metavar="TAG")
-        group1.add_argument("--date", nargs="?", type=str, dest="aedate",
-            help="Add the specific date for the received amount",
-            default="current date", metavar="YYYY-MM-DD")
-        addex = group1.add_mutually_exclusive_group()
-        addex.add_argument("--rcv", type=float, dest="arcv",
-            help="The actual amount you received", metavar="AMOUNT")
-        addex.add_argument("--spent", type=float, dest="aspent",
-            help="The actual amount you spent", metavar="AMOUNT")
-
-        # group2
-        # group3
-        # group4
-        # group5
-        # group6
-        # group7
-
-        return parser
-
-
-def main():
-    parser = PfimCore.cmd_parser()
-    args = parser.parse_args()
-    if len(sys.argv) == 1:
-        # parser.print_help()
-        pass
-    if args.cfg:
-        print("Fancy output turned ON")
-    else:
-        print("Fancy output turned OFF")    
-
 
 del _filehandler, _consolehandler, _formatter
 
+#cpfim = main
+#ipfim = InteractivePfim()
+#__all__ = ["cpfim", "ipfim"]
 
 if __name__ == "__main__":
-    main()
+    pass
