@@ -27,7 +27,7 @@ def main():
     if len(sys.argv) == 1:
         parser.print_help()
         
-    if args.cfg:
+    if args.fancy:
         _ipfim()
         print("Fancy output turned ON")
     else:
