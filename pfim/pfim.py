@@ -7,9 +7,8 @@ import logging
 from datetime import date, timedelta
 from enum import Enum
 from collections import namedtuple
-# from . import _version # as __PFIM_VERSION
 
-from typing import List, Dict, Callable, Generator, Mapping
+from typing import List, Dict, Callable, Generator, Mapping, Union
 
 ## -- set up a logger for the application
 logger = logging.getLogger(__name__)
@@ -28,8 +27,7 @@ _consolehandler.setFormatter(_formatter)
 # Global Constants and Structures
 PfimEntry = namedtuple("PfimEntry", "date tag kind amount")
 Output = namedtuple("Output", "report summary")
-# QueryKey = namedtuple("QueryKey", "key")
-# del __PFIM_VERSION
+
 _DBNAME = os.path.join(os.environ["HOME"], ".pfimdata.db")
 _EARN_KIND = "E"
 _SPENT_KIND = "S"
@@ -81,17 +79,58 @@ class PfimData:
             ) as conn:
             conn.cursor().execute(sql).commit()
 
-    def add_entry(self, entry: PfimEntry) -> None:
-        pass
+    def _run_query(self, query, *args, out=False) ->Union[sqlite3.Cursor, None]:
+        retval = None
+        with sqlite3.connect(_DBNAME) as conn:
+            if args:
+                retval = conn.cursor().execute(query, args)
+            else:
+                retval = conn.cursor().execute(query)
 
-    def fetch(self, query: str) -> Generator:
-        pass
+            conn.commit()
+        if out:
+            return retval
 
-    def update(self, query: str) -> None:
-        pass
+    def add_entry(self, query: str, *args) -> None:
+        try:
+            self._run_query(query, args)
+            self._logger.debug("New entry added")
+        except sqlite3.Error as err:
+            self._logger.error(f"Failed to add a new entry to database. {err}")
+            sys.exit(1)
 
-    def delete(self, query: str) -> None:
-        pass
+    def fetch(self, query: str, *args) -> Generator:
+        try:
+            retval = self._run_query(query, args)
+            self._logger.debug("Fetched data from database")
+        except sqlite3.Error as err:
+            self._logger.error(f"Failed to fetch data from database. {err}")
+            sys.exit(1)
+
+        for row in retval:
+            yield row
+
+    def update(self, query: str, *args) -> None:
+        try:
+            retval = self._run_query(query, args)
+            self._logger.debug("Updated database content")
+        except sqlite3.Error as err:
+            self._logger.error(f"Failed to update database content. {err}")
+            sys.exit(1)
+
+        for row in retval:
+            yield row
+
+    def delete(self, query: str, *args) -> None:
+        try:
+            retval = self._run_query(query, args)
+            self._logger.debug("Deleted data from database")
+        except sqlite3.Error as err:
+            self._logger.error(f"Failed to delete data from database. {err}")
+            sys.exit(1)
+
+        for row in retval:
+            yield row
 
 
 class InteractivePfim:
@@ -252,10 +291,3 @@ class PfimCore:
 
 
 del _filehandler, _consolehandler, _formatter
-
-#cpfim = main
-#ipfim = InteractivePfim()
-#__all__ = ["cpfim", "ipfim"]
-
-if __name__ == "__main__":
-    pass
