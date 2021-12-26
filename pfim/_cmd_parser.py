@@ -15,7 +15,6 @@ The available sub-commands are:
         description="PFIM: Personal Finance Manager",
         epilog=""
     )
-    # group0
     #pfim [-v | --version]
     parser.add_argument("-v", "--version", action="version",
         version="%(prog)s " + f"{PFIM_VERSION}")
@@ -24,7 +23,9 @@ The available sub-commands are:
     parser.add_argument("--fancy-output", action="store_true",
         dest="fancy", help="Toggle PFIM into fancy output mode")
 
-    # group1
+    # addgrp
+    # addcmds = (rec-rcv|rec-xpx)
+    # addOpts = [date|tag]
     addgrp = parser.add_argument_group(
         "Record income/expense commands and options")
     addgrp.add_argument("--tag", nargs="?", type=str, dest="recTag",
@@ -92,30 +93,22 @@ The available sub-commands are:
     updatex.add_argument("-update-xpx", action="store_true", 
         dest="updateXPX", help="Update record(s) corresponding to expense")
     
-    # group7
     # delcmds = (delete|delete-rcv|delete-spent)
     # delOpts = [target-tag|target-date|target-mount]
-    deletegrp = parser.add_argument_group("Delete commands and options")
-    deletegrp.add_argument("--target-tag", type=str, dest="targetTag",
+    rmgrp = parser.add_argument_group("Delete commands and options")
+    rmgrp.add_argument("--target-tag", type=str, dest="targetTag",
         metavar="TAG", help="Delete record(s) for a specific tag")
-    deletegrp.add_argument("--target-date", type=str, dest="targetDate",
+    rmgrp.add_argument("--target-date", type=str, dest="targetDate",
         metavar="YYYY-MM-DD", help="Delete record(s) for a specific date")
-    deletegrp.add_argument("--target-val", type=float, dest="targetVal",
+    rmgrp.add_argument("--target-val", type=float, dest="targetVal",
         metavar="VALUE",
         help="Delete record(s) for a specific income/expense value")
-    deletex = deletegrp.add_mutually_exclusive_group()
-    deletex.add_argument("-delete", action="store_true", dest="delete",
+    rmex = rmgrp.add_mutually_exclusive_group()
+    rmex.add_argument("-delete", action="store_true", dest="delete",
         help="Delete record(s)")
-    deletex.add_argument("-delete-rcv", action="store_true", dest="deleteRCV",
+    rmex.add_argument("-delete-rcv", action="store_true", dest="deleteRCV",
         help="Delete record(s) corresponding to incomes")
-    deletex.add_argument("-delete-xpx", action="store_true", 
+    rmex.add_argument("-delete-xpx", action="store_true", 
         dest="deleteXPX", help="Delete record(s) corresponding to expenses")
-
-    # 30. pfim -delete-all
-    # 31. pfim -delete --target-tag=TAG1
-    # 32. pfim -delete --target-date=YYYY-MM-DD
-    # 33. pfim -delete-rcv --target-amount=VALUE
-    # 34. pfim -deltte-spent --target-amount=VALUE
-
 
     return parser
