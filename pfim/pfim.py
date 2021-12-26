@@ -1,13 +1,14 @@
 """PFIM: Personal Finance Manager"""
 
 import os
+from queue import Queue
 import sys
 import sqlite3
 import logging
 import statistics
 from datetime import date, timedelta
 from enum import Enum, auto
-from collections import namedtuple, deque
+from collections import namedtuple
 
 from typing import List, Dict, Callable, Generator, Mapping, Union
 
@@ -81,6 +82,17 @@ class PfimQueryCmdEnum(Enum):
     DELETE = auto()
     DELETE_RCV = auto()
     DELETE_XPX = auto()
+
+
+def _validate_datestr(datestr: str) -> bool:
+    result = None
+    try:
+        result = date.fromisoformat(datestr)
+    except Exception:
+        result = None
+    if result is None:
+        return False
+    return True
 
 
 class PfimData:
@@ -253,7 +265,8 @@ class PfimCore:
         self._logger = logging.getLogger("pfim.PfimCore")
         self._mode = None
         self._output = None
-        self._query_history = deque()
+        self._query_history = Queue(maxsize=128)
+        
 
 
     def make_output(self) -> Output:
