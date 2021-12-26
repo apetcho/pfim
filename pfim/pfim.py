@@ -212,7 +212,7 @@ class Report:
         pass
 
 class ReportSummary:
-    def __init__(self, data: list[float]):
+    def __init__(self, data: List[float]):
         self._logger = logging.getLogger("pfim.ReportSummary")
         self._data = data
         self._compute()
