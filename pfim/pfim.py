@@ -27,7 +27,7 @@ _consolehandler.setFormatter(_formatter)
 
 
 # Global Constants and Structures
-PfimEntry = namedtuple("PfimEntry", "date tag kind amount")
+PfimEntry = namedtuple("PfimEntry", "date tag description amount")
 Output = namedtuple("Output", "report summary")
 QueryOperation = namedtuple("QueryOperation", "query operation args")
 
@@ -105,7 +105,7 @@ class PfimData:
             id INTEGER PRIMARY KEY AUTOINCREMENT NON NULL,
             opdate DATE,
             tag TEXT,
-            kind TEXT,
+            description TEXT,
             amount REAL
         )"""
         with sqlite3.connect(_DBNAME,
