@@ -7,11 +7,8 @@ def _cmd_parser():
     pfim sub-command [opt1, ...]
         
 The available sub-commands are:
-    -rcv, -spent, -show, -show-rcv, -show-spent, -update, -update-rcv,
-    -update-spent, -delete, -delete-rcv, -delete-spent
-
-The sub-commands options are describe below.
-    """
+    -record-rcv, -record-xpx, -show, -show-rcv, -show-xpx, -update,
+    -update-rcv, -update-xpx, -delete, -delete-rcv, -delete-xpx"""
     parser = argparse.ArgumentParser(
         prog="pfim",
         usage=USAGE,
@@ -25,22 +22,23 @@ The sub-commands options are describe below.
     parser.add_argument("-i", "--interactive", dest="imode",
         action="store_true", help="Switch to interactive mode")
     parser.add_argument("--fancy-output", action="store_true",
-        dest="fancy", help="Toggle into fancy output mode")
+        dest="fancy", help="Toggle PFIM into fancy output mode")
 
     # group1
     addgrp = parser.add_argument_group(
-        "Record adding commands and options")
-    addgrp.add_argument("--tag", nargs="?", type=str, dest="atag",
-        help=("Attach a tag to this received. Default is RCV if money "  
-            "received"), default="RCV", metavar="TAG")
-    addgrp.add_argument("--date", nargs="?", type=str, dest="aedate",
+        "Record income/expense commands and options")
+    addgrp.add_argument("--tag", nargs="?", type=str, dest="recTag",
+        help=("Attach a tag to this received. Possible value are RCV and "  
+            "XPX. [Default: RCV]"), default="RCV", metavar="TAG",
+            choices=["RCV", "XPX"])
+    addgrp.add_argument("--date", nargs="?", type=str, dest="recDate",
         help="Add the specific date for the received amount",
         default="current date", metavar="YYYY-MM-DD")
     addex = addgrp.add_mutually_exclusive_group()
-    addex.add_argument("-rcv", type=float, dest="rcv",
-        help="The actual amount you received", metavar="AMOUNT")
-    addex.add_argument("-spent", type=float, dest="aspent",
-        help="The actual amount you spent", metavar="AMOUNT")
+    addex.add_argument("-record-rcv", type=float, dest="rcv",
+        help="The actual amount you received", metavar="VALUE")
+    addex.add_argument("-record-xpx", type=float, dest="xpx",
+        help="The actual amount you spent", metavar="VALUE")
 
     # showcmds=(show|show-rcv|show-spent)
     # showopts=[sort-(date|tag|amount)]|[after-date|before-date|on-date|--desc]
@@ -49,8 +47,8 @@ The sub-commands options are describe below.
         help="Show output ordered by date")
     showgrp.add_argument("--sort-tag", action="store_true", dest="sortTag",
         help="Show output ordered by tag")
-    showgrp.add_argument("--sort-amount", action="store_true", dest="sortAmount",
-        help="Show output ordered by amount value")
+    showgrp.add_argument("--sort-val", action="store_true", dest="sortVal",
+        help="Show output ordered by income/expense value")
     showgrp.add_argument("--desc", action="store_true", dest="sortDesc",
         help="Sort in descending order. The default sorting order is ascending")
     showgrp.add_argument("--before-date", type=str, dest="beforeDate",
@@ -65,14 +63,11 @@ The sub-commands options are describe below.
     showex = showgrp.add_mutually_exclusive_group()
     showex.add_argument("-show", action="store_true", dest="show",
         help="Show all records in the database")
-    showex.add_argument("-show-recv", action="store_true", dest="showRcv",
+    showex.add_argument("-show-recv", action="store_true", dest="showRCV",
         help="Show all records in the database corresponding to incomes")
-    showex.add_argument("-show-spent", action="store_true", dest="showSpent",
+    showex.add_argument("-show-xpx", action="store_true", dest="showXPX",
         help="Show all records in the database corresponting to expenses")
     
-    # group4
-    # group5
-    # group6
     updategrp = parser.add_argument_group("Update record commands and options")
     # upcmds = (update|update-rcv|update-spent)
     # upOpts = [(old-tag, new-tag)|(old-date,new-date)|(old-amount,new-amount)]
@@ -84,20 +79,38 @@ The sub-commands options are describe below.
         metavar="YYYY-MM-DD", help="Previous date to be updated")
     updategrp.add_argument("--new-date", type=str, dest="newDate", 
         metavar="YYYY-MM-DD", help="New date to update the old one")
-    updategrp.add_argument("--old-amount", type=float, dest="oldAmount", 
+    updategrp.add_argument("--old-val", type=float, dest="oldVal", 
         metavar="VALUE1",
         help="Previous amount value to be updated")
-    updategrp.add_argument("--new-amount", type=float, dest="newAmount", 
+    updategrp.add_argument("--new-val", type=float, dest="newVal", 
         metavar="VALUE2", help="New amount value to update the old one")
     updatex = updategrp.add_mutually_exclusive_group()
     updatex.add_argument("-update", action="store_true", default="update",
         help="Update record(s)")
-    updatex.add_argument("-update-rcv", action="store_true", dest="updateRcv",
+    updatex.add_argument("-update-rcv", action="store_true", dest="updateRCV",
         help="Update record(s) corresponding to income")
-    updatex.add_argument("-update-spent", action="store_true", 
-        dest="updateSpent", help="Update record(s) corresponding to expense")
+    updatex.add_argument("-update-xpx", action="store_true", 
+        dest="updateXPX", help="Update record(s) corresponding to expense")
     
     # group7
+    # delcmds = (delete|delete-rcv|delete-spent)
+    # delOpts = [target-tag|target-date|target-mount]
+    deletegrp = parser.add_argument_group("Delete commands and options")
+    deletegrp.add_argument("--target-tag", type=str, dest="targetTag",
+        metavar="TAG", help="Delete record(s) for a specific tag")
+    deletegrp.add_argument("--target-date", type=str, dest="targetDate",
+        metavar="YYYY-MM-DD", help="Delete record(s) for a specific date")
+    deletegrp.add_argument("--target-val", type=float, dest="targetVal",
+        metavar="VALUE",
+        help="Delete record(s) for a specific income/expense value")
+    deletex = deletegrp.add_mutually_exclusive_group()
+    deletex.add_argument("-delete", action="store_true", dest="delete",
+        help="Delete record(s)")
+    deletex.add_argument("-delete-rcv", action="store_true", dest="deleteRCV",
+        help="Delete record(s) corresponding to incomes")
+    deletex.add_argument("-delete-xpx", action="store_true", 
+        dest="deleteXPX", help="Delete record(s) corresponding to expenses")
+
     # 30. pfim -delete-all
     # 31. pfim -delete --target-tag=TAG1
     # 32. pfim -delete --target-date=YYYY-MM-DD
