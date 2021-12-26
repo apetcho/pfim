@@ -32,14 +32,14 @@ The available sub-commands are:
         "Record income/expense commands and options")
     addgrp.add_argument("--tag", nargs="?", type=str, dest="recTag",
         help=("Attach a tag to this received. Possible value are RCV and "  
-            "XPX. [Default: RCV]"), default="RCV", metavar="TAG",
+            "XPX. [default: RCV]"), default="RCV", metavar="TAG",
             choices=["RCV", "XPX"])
     addgrp.add_argument("--date", nargs="?", type=str, dest="recDate",
         help="Add the specific date for the received amount",
         default="current date", metavar="YYYY-MM-DD")
     addgrp.add_argument("--description", type=str, dest="Description",
-        help='Short description of a new record. [default: "N/A"]',
-        default="N/A")
+        help='Short description for a new record. [default: "N/A"]',
+        default="N/A", metavar="TEXT")
     addex = addgrp.add_mutually_exclusive_group()
     addex.add_argument("-record-rcv", type=float, dest="rcv",
         help="The actual amount you received", metavar="VALUE")

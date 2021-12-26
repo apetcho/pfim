@@ -6,6 +6,7 @@ import sys
 import sqlite3
 import logging
 import statistics
+import functools
 from datetime import date, timedelta
 from enum import Enum, auto
 from collections import namedtuple
@@ -40,6 +41,76 @@ RECORD = 1
 FETCH = 2
 UPDATE = 3
 DELETE = 4
+
+_PFIMCmdDoc = {}
+
+def _register_cmd_doc(func):
+    functools.wraps(func)
+    def wrapper(*args, **kws):
+        fname = func.__name__
+        fname = fname[1:] if fname.startswith("_") else fname
+        # fname = fname[:len(fname)-4] if fname[-4:] == "_doc" else fname
+        _PFIMCmdDoc[fname] = func.__doc__
+        return
+    return wrapper
+#-record-rcv, -record-xpx, -show, -show-rcv, -show-xpx, -update,
+#-update-rcv, -update-xpx, -delete, -delete-rcv, -delete-xpx
+@_register_cmd_doc
+def _record_rcv():
+    pass
+
+@_register_cmd_doc
+def _record_xpx():
+    pass
+
+@_register_cmd_doc
+def _show():
+    pass
+
+@_register_cmd_doc
+def _show_xpx():
+    pass
+
+@_register_cmd_doc
+def _show_rcv():
+    pass
+
+
+@_register_cmd_doc
+def _update():
+    pass
+
+
+@_register_cmd_doc
+def _update_xpx():
+    pass
+
+
+@_register_cmd_doc
+def _update_rcv():
+    pass
+
+
+@_register_cmd_doc
+def _delete():
+    pass
+
+
+@_register_cmd_doc
+def _delete_xpx():
+    pass
+
+@_register_cmd_doc
+def _delete_rcv():
+    pass
+
+
+
+
+
+
+
+
 
 
 # --- PFIM utility class --
