@@ -37,6 +37,9 @@ The available sub-commands are:
     addgrp.add_argument("--date", nargs="?", type=str, dest="recDate",
         help="Add the specific date for the received amount",
         default="current date", metavar="YYYY-MM-DD")
+    addgrp.add_argument("--description", type=str, dest="Description",
+        help='Short description of a new record. [default: "N/A"]',
+        default="N/A")
     addex = addgrp.add_mutually_exclusive_group()
     addex.add_argument("-record-rcv", type=float, dest="rcv",
         help="The actual amount you received", metavar="VALUE")

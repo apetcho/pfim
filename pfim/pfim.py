@@ -256,18 +256,12 @@ class PfimCore:
     
     prolog = ""
     epilog = ""
-    ADD = 1
-    FETCH = 2
-    UPDATE = 3
-    DELETE = 4
 
     def __init__(self):
         self._logger = logging.getLogger("pfim.PfimCore")
         self._mode = None
         self._output = None
         self._query_history = Queue(maxsize=128)
-        
-
 
     def make_output(self) -> Output:
         pass
