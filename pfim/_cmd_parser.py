@@ -4,7 +4,7 @@ def _cmd_parser():
     import argparse
     USAGE = """
     pfim [-h | --help] [-v | --version] [--interactive]
-    pfim sub-command [opt1, ...]
+    pfim sub-command=[OPT1]|[OPT2]|[...]
         
 The available sub-commands are:
     -record-rcv, -record-xpx, -show, -show-rcv, -show-xpx, -update,
@@ -16,6 +16,8 @@ The available sub-commands are:
         epilog=""
     )
     #pfim [-v | --version]
+    parser.add_argument("--help-cmd", type=str, dest="helpcmd", metavar="CMD",
+        help="Show documentation for a given command (CMD)")
     parser.add_argument("-v", "--version", action="version",
         version="%(prog)s " + f"{PFIM_VERSION}")
     parser.add_argument("-i", "--interactive", dest="imode",
