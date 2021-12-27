@@ -1,9 +1,8 @@
 from ._version import PFIM_VERSION
+from datetime import date
+
 
 def _cmd_parser():
-    # The available sub-commands are:
-    # -record-rcv, -record-xpx, -show, -show-rcv, -show-xpx, -update,
-    # -update-rcv, -update-xpx, -delete, -delete-rcv, -delete-xpx
     import argparse
     DESCRIPTION = """
     pfim is a small command-line tool for tracking personal finance. It track
@@ -21,16 +20,63 @@ def _cmd_parser():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     #pfim [-v | --version]
-    #parser.add_argument("--help-cmd", type=str, dest="helpcmd", metavar="CMD",
-    #    help="Show documentation for a given command (CMD)")
+    
     parser.add_argument("-v", "--version", action="version",
         version="%(prog)s " + f"{PFIM_VERSION}")
-    parser.add_argument("-i", "--interactive", dest="imode",
+    parser.add_argument("-i", "--interactive", dest="interactive",
         action="store_true", help="Switch to interactive mode")
     parser.add_argument("-l", "--list", action="store_true", dest="lstCmd",
         help="List all pfim sub-commands")
     parser.add_argument("--help-cmd", type=str, dest="helpCmd", metavar="cmd",
         help="Show documentation for a given command")
+
+    # sub-commands parser
+    subparsers = parser.add_subparsers(title="pfim sub-commands")
+
+    # -- record subcommand
+    recparser = subparsers.add_parser(
+        name="record",
+        help="Record an income or expense entry",
+        usage=(
+            "pfim record [--date=YYYY-MM-DD][--tag=TAG][--descr=TEX] "
+            "(--exp=VALUE | --inc=VALUE)"))
+    recparser.add_argument("--date", type=str, dest="recdate",
+        metavar="YYYY-MM-DD", default=date.today().isoformat(),
+        help="Specify the date for this record. Default is current date")
+    recparser.add_argument("--tag", type=str, dest="rectag", metavar="TAG",
+        help="Tag this record. [default: N/A]", default="N/A")
+    recparser.add_argument("--descr", type=str, dest="descr",
+        metavar="TEXT", default="N/A",
+        help="Add short the description for this record. [default: N/A]")
+    recpex = recparser.add_mutually_exclusive_group()
+    recpex.add_argument("--exp", type=float, dest="expense",
+        metavar="VALUE",
+        help="This record is an expense of this VALUE")
+    recpex.add_argument("--inc", type=float, dest="income",
+        metavar="VALUE",
+        help="This record is an income of this VALUE")
+    
+    # -- report subcommand
+    repparser = subparsers.add_parser(
+        name="report",
+        help="Show report for a given query")
+
+    # -- update subcommand parser
+    updparser = subparsers.add_parser(
+        name="update",
+        help="Update record(s) for given query")
+
+    # -- delete subcommand parser
+    delparser = subparsers.add_parser(
+        name="delete",
+        help="Delete record(s) for given query")
+
+    # recparser.add_argument("--tag", type=str, dest="extag", metavar="TAG",
+    #     help="Tag a record")
+    # recparser.add_argument("-descr", "--description", type=str)
+    # recex = recparser.add_mutually_exclusive_group()
+    # recex.add_argument("--expense", type=float, dest="expense", metavar="VALUE", help="Record the expense of thie VALUE")
+
     #parser.add_argument("--fancy-output", action="store_true",
     #    dest="fancy", help="Toggle PFIM into fancy output mode")
 
