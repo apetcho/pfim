@@ -32,8 +32,8 @@ _consolehandler.setFormatter(_formatter)
 
 # Global Constants and Structures
 PfimEntry = namedtuple("PfimEntry", "date tag description amount")
-Output = namedtuple("Output", "report summary")
-QueryOperation = namedtuple("QueryOperation", "query operation args")
+PfimOutput = namedtuple("PfimOutput", "report summary")
+PfimQuery = namedtuple("PfimQuery", "query args")
 
 _DBNAME = os.path.join(os.environ["HOME"], ".pfimdata.db")
 _EARN_KIND = "E"
@@ -344,31 +344,16 @@ class InteractivePfim:
         self._logger = logging.getLogger("pfim.InteractivePfim")
         pass
 
-    def record_rcv(self, kw: Dict) -> QueryOperation:
+    def record(self, kw: Dict) -> PfimQuery:
         pass
 
-    def record_xpx(self, kw: Dict) -> QueryOperation:
+    def report(self, kw: Dict) -> PfimQuery:
         pass
 
-    def show(self, kw: Dict) -> QueryOperation:
+    def delete(self, kw: Dict) -> PfimQuery:
         pass
 
-    def show_rcv(self, kw: Dict) -> QueryOperation:
-        pass
-
-    def show_xpx(self, kw: Dict) -> QueryOperation:
-        pass
-
-    def delete(self, kw: Dict) -> QueryOperation:
-        pass
-
-    def delete_rcv(self, kw: Dict) -> QueryOperation:
-        pass
-
-    def delete_xpx(self, kw) -> QueryOperation:
-        pass
-
-    def update(self, kw: Dict) -> QueryOperation:
+    def update(self, kw: Dict) -> PfimQuery:
         pass
 
     def quit(self) -> None:
@@ -376,9 +361,6 @@ class InteractivePfim:
         sys.exit(0)
 
     def clear_console(self) -> None:
-        pass
-
-    def __call__(self, *args, **kwargs):
         pass
 
 
@@ -432,27 +414,27 @@ class PfimCore:
         self._output = None
         self._query_history = Queue(maxsize=128)
 
-    """ def record(self, *args, **kwargs) -> None:
+    def record(self, kw: Dict) -> PfimQuery:
         pass
 
-    def update(self, *args, **kwargs) -> str:
+    def update(self, kw: Dict) -> PfimQuery:
         pass
 
-    def delete(self, *args, **kwargs) -> str:
+    def delete(self, kw: Dict) -> PfimQuery:
         pass
 
-    def report(self, *args, **kwargs) -> Report:
-        pass """
+    def report(self, kw: Dict) -> PfimQuery:
+        pass
 
-    def make_output(self) -> Output:
+    def make_output(self) -> PfimOutput:
         pass
 
     def write_output(self, file=sys.stdout):
         pass
 
 
-    def create_query(self, cmd: PfimQueryCmdEnum, kw: Dict) -> str:
-        """Create a new query."""
+    """ def create_query(self, cmd: PfimQueryCmdEnum, kw: Dict) -> str:
+        # -- Create a new query--
         query = None
         # addgrp
         # addcmds = (record-rcv|record-xpx)
@@ -501,6 +483,6 @@ class PfimCore:
         if cmd == PfimQueryCmdEnum.DELETE_XPX:
             # TODO: make query then return it immediatly
             return query
-
+ """
 
 del _filehandler, _consolehandler, _formatter
