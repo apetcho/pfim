@@ -60,6 +60,31 @@ def _cmd_parser():
     repparser = subparsers.add_parser(
         name="report",
         help="Show report for a given query")
+    # showcmds=(show|show-rcv|show-spent)
+    # showOpts=[sort-(date|tag|amount)]|[after-date|before-date|on-date|
+    #   --desc]
+    repparser.add_argument("--sort-date", action="store_true",
+        dest="sortDate",
+        help="Sort the query result by date")
+    repparser.add_argument("--sort-tag", action="store_true", dest="sortTag",
+        help="Sort the query result by tag")
+    repparser.add_argument("--sort-amount", action="store_true",
+        dest="sortAmount",
+        help="Sort the query result by amount, i.e expense or income value")
+    repparser.add_argument("--before", type=str, dest="bDate",
+        metavar="YYYY-MM-DD",
+        help="Show report for records whose date pre-date YYYY-MM-DD")
+    repparser.add_argument("--after", type=str, dest="aDate",
+        metavar="YYYY-MM-DD",
+        help="Show report for records whose date post-date YYYY-MM-DD")
+    repparser.add_argument("--on", type=str, dest="oDate",
+        metavar="YYYY-MM-DD",
+        help="Show report for records for the given date YYYY-MM-DD")
+    repparser.add_argument("--tag-query", type=str, dest="tagQuery",
+        metavar="TAG",
+        help="Show report for records for the given TAG")
+    #repparser.add_argument("--date-query")
+
 
     # -- update subcommand parser
     updparser = subparsers.add_parser(

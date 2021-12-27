@@ -432,6 +432,18 @@ class PfimCore:
         self._output = None
         self._query_history = Queue(maxsize=128)
 
+    """ def record(self, *args, **kwargs) -> None:
+        pass
+
+    def update(self, *args, **kwargs) -> str:
+        pass
+
+    def delete(self, *args, **kwargs) -> str:
+        pass
+
+    def report(self, *args, **kwargs) -> Report:
+        pass """
+
     def make_output(self) -> Output:
         pass
 
