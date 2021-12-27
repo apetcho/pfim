@@ -1,3 +1,4 @@
+from curses.panel import update_panels
 from ._version import PFIM_VERSION
 from datetime import date
 
@@ -60,9 +61,6 @@ def _cmd_parser():
     repparser = subparsers.add_parser(
         name="report",
         help="Show report for a given query")
-    # showcmds=(show|show-rcv|show-spent)
-    # showOpts=[sort-(date|tag|amount)]|[after-date|before-date|on-date|
-    #   --desc]
     repparser.add_argument("--sort-date", action="store_true",
         dest="sortDate",
         help="Sort the query result by date")
@@ -71,25 +69,56 @@ def _cmd_parser():
     repparser.add_argument("--sort-amount", action="store_true",
         dest="sortAmount",
         help="Sort the query result by amount, i.e expense or income value")
-    repparser.add_argument("--before", type=str, dest="bDate",
+    repparser.add_argument("--before", type=str, dest="beforeQuery",
         metavar="YYYY-MM-DD",
         help="Show report for records whose date pre-date YYYY-MM-DD")
-    repparser.add_argument("--after", type=str, dest="aDate",
+    repparser.add_argument("--after", type=str, dest="afterQuery",
         metavar="YYYY-MM-DD",
         help="Show report for records whose date post-date YYYY-MM-DD")
-    repparser.add_argument("--on", type=str, dest="oDate",
+    repparser.add_argument("--on", type=str, dest="onQuery",
         metavar="YYYY-MM-DD",
         help="Show report for records for the given date YYYY-MM-DD")
-    repparser.add_argument("--tag-query", type=str, dest="tagQuery",
+    repparser.add_argument("--for-tag", type=str, dest="tagQuery",
         metavar="TAG",
         help="Show report for records for the given TAG")
-    #repparser.add_argument("--date-query")
+    repparser.add_argument("--for-exp", action="store_true", dest="expQuery",
+        help="Show report only for records for expenses")
+    repparser.add_argument("--for-inc", action="store_true", dest="incQuery",
+        help="Show report only for records for incomes")
+    repparser.add_argument("--all", action="store_true", dest="allQuery",
+        help="Show report for all records")
+    
 
 
     # -- update subcommand parser
+    # upcmds = (update|update-rcv|update-spent)
+    # upOpts = [(old-tag, new-tag)|(old-date,new-date)|(old-amount,
+    #   new-amount)]
     updparser = subparsers.add_parser(
         name="update",
+        formatter_class=argparse.RawTextHelpFormatter,
+        usage="\n\tpfim update [OPTIONS]",
         help="Update record(s) for given query")
+    updparser.add_argument("--expense", nargs=3, dest="upExpense",
+        metavar="",
+        help=("Update the income for a given date. \nThe format is: "
+            "--expense YYYY-DD-MM OLD_VALUE NEW_VALUE"
+            "\n\tExample: pfim update --expense 2021-12-19 230.15 320.10"))
+    updparser.add_argument("--income", nargs=3, dest="upIncome",
+        metavar="",
+        help=("Update the income for a given date. \nThe format is: "
+            "--expense YYYY-DD-MM OLD_VALUE NEW_VALUE"
+            "\n\tExample: pfim update --income 2021-03-23 780.25 1125.10"))
+    updparser.add_argument("--tag", nargs=3, dest="upTag",
+        metavar="",
+        help=("Update the tag for a given date. \nThe format is: "
+            "--tag YYYY-DD-MM OLD_TAG NEW_TAG"
+            "\n\tExample: pfim update --tag 2021-05-13 freeL work"))
+    updparser.add_argument("--descr", nargs=4, dest="upDescr",
+        metavar="",
+        help=(  """Update a record description for given date.
+The format is: --desc YYYY-MM-DD OLD_DESCR NEW_DESCR
+\tExample:  2022-02-17 'Concert reservation' 'Hotel booking for PyCon'"""))
 
     # -- delete subcommand parser
     delparser = subparsers.add_parser(
