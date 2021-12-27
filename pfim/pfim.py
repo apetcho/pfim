@@ -1,5 +1,6 @@
 """PFIM: Personal Finance Manager"""
 
+from ast import For
 import os
 from queue import Queue
 import sys
@@ -10,6 +11,8 @@ import functools
 from datetime import date, timedelta
 from enum import Enum, auto
 from collections import namedtuple
+from tkinter.tix import Form
+from tkinter.ttk import Style
 
 from typing import List, Dict, Callable, Generator, Mapping, Union
 
@@ -57,78 +60,172 @@ def _register_cmd_doc(func):
 #-update-rcv, -update-xpx, -delete, -delete-rcv, -delete-xpx
 @_register_cmd_doc
 def _record_rcv():
+    """record_rcv()
+    Record an income entry into PFIM backend database.
+    
+    This command requires information supplied through its options.
+    The option are as follow.
+    
+    Options:
+    --tag           Tag given to this entry. The tag option can be ignored. If
+                    ignored, the field will simply be filled with a default 
+                    symbol "N/A", meaning Not Available.
+    --date          This is the date on which the supposed entry was actually 
+                    made. The date option can be ignored, in which the current 
+                    date is considered.
+    --descr         A short description for the entry. It must not exceed 30
+                    ASCII characters, otherwise it will be truncated.
+    --amount        The value of the income being entered into the database.
+                    
+    Example
+    ------- 
+    In pfim default mode:
+     
+    $ pfim --date=2021-12-26 --descr="Payment from M. Eric" --tag=PWM \
+        --amount=275.00
+
+    In interactive mode:
+    
+    $ pfim --interactive
+    pfim>> record_rcv --date=2021-12 --descr="Payment from M. Eric" --tag=PWM \
+        --amount=275.00 
+    """
     pass
+_record_rcv()
+
 
 @_register_cmd_doc
 def _record_xpx():
+    """record_xpx()
+    Record an expense entry into PFIM backend database.
+    
+    This command requires information supplied through its options.
+    The option are as follow.
+    
+    Options:
+    --tag           Tag given to this entry. The tag option can be ignored. If
+                    ignored, the field will simply be filled with a default 
+                    symbol "N/A", meaning Not Available.
+    --date          This is the date on which the supposed entry was actually 
+                    made. The date option can be ignored, in which the current 
+                    date is considered.
+    --descr         A short description for the entry. It must not exceed 30
+                    ASCII characters, otherwise it will be truncated.
+    --amount        The value of the expense being entered into the database.
+                                     
+    Example
+    ------- 
+    In pfim default mode:
+     
+    $ pfim --date=2021-12-26 --descr="Bought Cinema ticket" --tag=OUT  \
+        --amount=75.00
+
+    In interactive mode:
+    
+    $ pfim --interactive
+    pfim>> record_rcv --date=2021-12 --descr="Bout Ciema ticket" --tag=OUT \
+        --amount=275.00 
+    """
     pass
 
 @_register_cmd_doc
 def _show():
+    """show()
+    """
     pass
 
 @_register_cmd_doc
 def _show_xpx():
+    """show_xpx()
+    """
     pass
 
 @_register_cmd_doc
 def _show_rcv():
+    """show_rcv()
+    """
     pass
 
 
 @_register_cmd_doc
 def _update():
+    """update()
+    """
     pass
-
 
 @_register_cmd_doc
 def _update_xpx():
+    """update_xpx()
+    """
     pass
 
 
 @_register_cmd_doc
 def _update_rcv():
+    """update_rcv()
+    """
     pass
 
 
 @_register_cmd_doc
 def _delete():
+    """delete()
+    """
     pass
 
 
 @_register_cmd_doc
 def _delete_xpx():
+    """delete_xpx()
+    """
     pass
 
 @_register_cmd_doc
 def _delete_rcv():
+    """delete_rcv()
+    """
     pass
-
-
-
-
-
-
-
-
 
 
 # --- PFIM utility class --
 
 
 class OutputBeautify:
-    class Color(Enum):
-        pass
 
-    class Format(Enum):
-        pass
+    def __init__(self, textstr: str):
+        #self._logger = logging.getLogger("pfim.Pfim.OutPutBeautify")
+        self._textstr = textstr
 
-    def __init__(self):
-        self._logger = logging.getLogger("pfim.Pfim.OutPutBeautify")
-        pass
+    def decorate(self, color="green", slant="normal", underline=False,
+        bold=False):
+        mapping = {
+            "black": 30, "red": 31, "green": 32, "yellow": 33,
+            "blue": 34, "magenta": 35, "cyan": 36, "white": 37,
+        }
+        stylemap = {"noraml": 0, "bold": 1, "italic": 3, "underline": 4}
+        base = 38
+        if color.lower() in mapping.keys():
+            cval = mapping[color.lower()]
+        else:
+            cval = mapping["black"]
+        txt = self._textstr
+        if slant.lower() in ("italic", "normal"):
+            sval = stylemap[slant.lower()]
+        else:
+            sval = stylemap["normal"]
+        uval = stylemap["underline"] if underline else None
+        bval = stylemap["bold"] if bold else None
 
-    def __call__(self, *args, **kwargs):
-        pass
+        deco = f"\x1b[{base};" #"\x1b[m"
+        if sval:
+            deco = deco + f"{sval};"
+        if uval:
+            deco = deco + f"{uval};"
+        if bval:
+            deco = deco + f"{bval};"
+
+        deco = deco + f"{cval}m;{txt}\x1b[m"
+        return deco
 
 
 def _adapter(dateObj: date):
@@ -148,6 +245,7 @@ class PfimQueryCmdEnum(Enum):
     SHOW_RCV = auto()
     SHOW_XPX = auto()
     UPDATE = auto()
+    # UPDATE_DESC = auto()  # FIXME: maybe included as a new command
     UPDATE_RCV = auto()
     UPDATE_XPX = auto()
     DELETE = auto()
