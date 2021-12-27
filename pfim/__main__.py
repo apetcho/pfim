@@ -26,12 +26,37 @@ def main():
     args = parser.parse_args()
     if len(sys.argv) == 1:
         parser.print_help()
+
+    # request for the list of pfim sub-commands
+    if args.lstCmd:
+        pass
+
+    # request for documentation of a given command
+    # The available sub-commands are:
+    # -record-rcv, -record-xpx, -show, -show-rcv, -show-xpx, -update,
+    # -update-rcv, -update-xpx, -delete, -delete-rcv, -delete-xpx
+    if args.helpCmd:
+        cmdlist = ["record", "show", "update", "delete"]
+        if args.helpCmd not in cmdlist:
+            print("Unknown command", file=sys.stderr)   # XXX
+
+        # show documentation of record command
+        if args.record:
+            pass
+        # show documentation of show command
+        if args.show:
+            pass
+        if args.update:
+            pass
+        if args.delete:
+            pass
         
-    if args.fancy:
-        _ipfim()
-        print("Fancy output turned ON")
-    else:
-        _cpfim()
-        print("Fancy output turned OFF")  
+    # We are not in interactive mode
+    if not args.interactive:
+        pass
+
+    # We are in interactive mode
+    if args.interactive:
+        pass
 
 main()
