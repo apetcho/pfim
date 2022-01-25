@@ -1,6 +1,5 @@
 """PFIM: Personal Finance Manager"""
 
-from ast import For
 import os
 from queue import Queue
 import sys
@@ -11,8 +10,6 @@ import functools
 from datetime import date, timedelta
 from enum import Enum, auto
 from collections import namedtuple
-from tkinter.tix import Form
-from tkinter.ttk import Style
 
 from typing import List, Dict, Callable, Generator, Mapping, Union
 
@@ -430,6 +427,9 @@ class PfimCore:
         pass
 
     def write_output(self, file=sys.stdout):
+        pass
+
+    def process_fetch_result(self, *args) -> None:
         pass
 
 
